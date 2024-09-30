@@ -1,0 +1,71 @@
+    title = forms.CharField(label='Название', max_length=20)
+    description = forms.CharField(
+        label='Описание',
+        widget=forms.Textarea({'cols': '22', 'rows': '5'}),
+    )
+    price = forms.IntegerField(
+        label='Цена',
+        min_value=10, max_value=100,
+        help_text='Рекомендованная розничная цена',
+    )
+    comment = forms.CharField(
+        label='Комментарий',
+        required=False,
+        widget=forms.Textarea({'cols': '22', 'rows': '5'}),
+    )
+
+
+
+
+            widgets= {
+            'Contest',forms.Textarea({'cols': '22', 'rows': '5'})}
+
+
+
+                    default=10,
+        validators=[MinValueValidator(10), MaxValueValidator(100)],
+
+
+
+        from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+# Опишите модель Contest здесь!
+
+
+class Contest(models.Model):
+    title = models.CharField('Название', max_length=20)
+    description = models.TextField('Описание')
+    price = models.IntegerField('Цена',
+        help_text='Рекомендованная розничная цена',
+    )
+    comment = models.TextField(
+        'Комментарий',
+        blank=True,
+    )
+
+
+    from django import forms
+from .models import Contest
+
+class ContestForm(forms.Modelform):
+    class Meta:
+        model = Contest
+        fields = '__all__'
+
+
+
+    title = forms.CharField(label='Название', max_length=20)
+    description = forms.CharField(
+        label='Описание',
+        widget=forms.Textarea({'cols': '5', 'rows': '5'}),
+    )
+    price = forms.IntegerField(
+        label='Цена',
+        min_value=10, max_value=100,
+        help_text='Рекомендованная розничная цена',
+    )
+    comment = forms.CharField(
+        label='Комментарий',
+        required=False,
+        widget=forms.Textarea({'cols': '5', 'rows': '5'}),
+    )
