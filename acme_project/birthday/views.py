@@ -1,14 +1,30 @@
 # birthday/views.py
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Импортируем класс BirthdayForm, чтобы создать экземпляр формы.
-from .forms import BirthdayForm
-
-
 from .forms import BirthdayForm
 # Импортируем из utils.py функцию для подсчёта дней.
 from .utils import calculate_birthday_countdown
 from .models import Birthday
+
+
+def edit_birthday(request, pk):
+    # Находим запрошенный объект для редактирования по первичному ключу
+    # или возвращаем 404 ошибку, если такого объекта нет.
+    instance = get_object_or_404(Birthday, pk=pk)
+    # Связываем форму с найденным объектом: передаём его в аргумент instance.
+    form = BirthdayForm(request.POST or None, instance=instance)
+    # Всё остальное без изменений.
+    context = {'form': form}
+    # Сохраняем данные, полученные из формы, и отправляем ответ:
+    if form.is_valid():
+        form.save()
+        birthday_countdown = calculate_birthday_countdown(
+            form.cleaned_data['birthday']
+        )
+        context.update({'birthday_countdown': birthday_countdown})
+    return render(request, 'birthday/birthday.html', context)
+
 
 def birthday(request):
     form = BirthdayForm(request.POST or None)
