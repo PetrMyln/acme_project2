@@ -1,7 +1,8 @@
 # birthday/views.py
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
-
+from django.views.generic import CreateView, ListView, UpdateView
+from django.urls import reverse_lazy
 # Импортируем класс BirthdayForm, чтобы создать экземпляр формы.
 from .forms import BirthdayForm
 # Импортируем из utils.py функцию для подсчёта дней.
@@ -55,6 +56,7 @@ def birthday_list(request):
     context = {'page_obj': page_obj}
     return render(request, 'birthday/birthday_list.html', context)
 
+
 def delete_birthday(request, pk):
     # Получаем объект модели или выбрасываем 404 ошибку.
     instance = get_object_or_404(Birthday, pk=pk)
@@ -70,3 +72,46 @@ def delete_birthday(request, pk):
         return redirect('birthday:list')
     # Если был получен GET-запрос — отображаем форму.
     return render(request, 'birthday/birthday.html', context)
+
+
+class BirthdayListView(ListView):
+    # Указываем модель, с которой работает CBV...
+    model = Birthday
+    # ...сортировку, которая будет применена при выводе списка объектов:
+    ordering = 'id'
+    # ...и даже настройки пагинации:
+    paginate_by = 10
+
+    # template_name='suka'
+
+
+class BirthdayCreateView(CreateView):
+    """
+    Проверка имён и виджет-календарь настроены в форме BirthdayForm,
+     а в форме, созданной классом BirthdayCreateView, их нет.
+    Класс CreateView может создать собственную форму, но может использовать
+     форму, созданную отдельно, через класс ModelForm.
+    Применим эту полезную возможность и подключим форму BirthdayForm к классу BirthdayCreateView:
+    для этого вместо атрибута fields нужно указать атрибут form_class;
+    значением этого атрибута будет BirthdayForm.
+    """
+
+    # Указываем модель, с которой работает CBV...
+    model = Birthday
+    # Этот класс сам может создать форму на основе модели!
+    # Нет необходимости отдельно создавать форму через ModelForm.
+    # Указываем поля, которые должны быть в форме:
+    # fields = '__all__'
+    form_class = BirthdayForm
+    # Явным образом указываем шаблон:
+    template_name = 'birthday/birthday.html'
+    # Указываем namespace:name страницы, куда будет перенаправлен пользователь
+    # после создания объекта:
+    success_url = reverse_lazy('birthday:list')
+
+
+class BirthdayUpdateView(UpdateView):
+    model = Birthday
+    form_class = BirthdayForm
+    template_name = 'birthday/birthday.html'
+    success_url = reverse_lazy('birthday:list')
