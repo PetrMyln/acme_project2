@@ -84,60 +84,24 @@ class BirthdayListView(ListView):
 
     # template_name='suka'
 
-# Создаём миксин.
+
 class BirthdayMixin:
     model = Birthday
-    form_class = BirthdayForm
-    template_name = 'birthday/birthday.html'
     success_url = reverse_lazy('birthday:list')
 
 
-# Добавляем миксин первым по списку родительских классов.
-class BirthdayCreateView(BirthdayMixin, CreateView):
-    # Не нужно описывать атрибуты: все они унаследованы от BirthdayMixin.
+class BirthdayFormMixin:
+    form_class = BirthdayForm
+    template_name = 'birthday/birthday.html'
+
+
+class BirthdayCreateView(BirthdayMixin, BirthdayFormMixin, CreateView):
     pass
 
 
-class BirthdayUpdateView(BirthdayMixin, UpdateView):
-    # И здесь все атрибуты наследуются от BirthdayMixin.
+class BirthdayUpdateView(BirthdayMixin, BirthdayFormMixin, UpdateView):
     pass
 
-class BirthdayDeleteView(DeleteView):
-    model = Birthday
-    success_url = reverse_lazy('birthday:list')
 
-
-
-
-
-
-class Birthd1ayCreateView(CreateView):
-    """
-    Проверка имён и виджет-календарь настроены в форме BirthdayForm,
-     а в форме, созданной классом BirthdayCreateView, их нет.
-    Класс CreateView может создать собственную форму, но может использовать
-     форму, созданную отдельно, через класс ModelForm.
-    Применим эту полезную возможность и подключим форму BirthdayForm к классу BirthdayCreateView:
-    для этого вместо атрибута fields нужно указать атрибут form_class;
-    значением этого атрибута будет BirthdayForm.
-    """
-
-    # Указываем модель, с которой работает CBV...
-    model = Birthday
-    # Этот класс сам может создать форму на основе модели!
-    # Нет необходимости отдельно создавать форму через ModelForm.
-    # Указываем поля, которые должны быть в форме:
-    # fields = '__all__'
-    form_class = BirthdayForm
-    # Явным образом указываем шаблон:
-    template_name = 'birthday/birthday.html'
-    # Указываем namespace:name страницы, куда будет перенаправлен пользователь
-    # после создания объекта:
-    success_url = reverse_lazy('birthday:list')
-
-
-class Birthda1yUpdateView(UpdateView):
-    model = Birthday
-    form_class = BirthdayForm
-    template_name = 'birthday/birthday.html'
-    success_url = reverse_lazy('birthday:list')
+class BirthdayDeleteView(BirthdayMixin, DeleteView):
+    pass
