@@ -1,7 +1,7 @@
 # birthday/views.py
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView, ListView, UpdateView
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from django.urls import reverse_lazy
 # Импортируем класс BirthdayForm, чтобы создать экземпляр формы.
 from .forms import BirthdayForm
@@ -84,8 +84,34 @@ class BirthdayListView(ListView):
 
     # template_name='suka'
 
+# Создаём миксин.
+class BirthdayMixin:
+    model = Birthday
+    form_class = BirthdayForm
+    template_name = 'birthday/birthday.html'
+    success_url = reverse_lazy('birthday:list')
 
-class BirthdayCreateView(CreateView):
+
+# Добавляем миксин первым по списку родительских классов.
+class BirthdayCreateView(BirthdayMixin, CreateView):
+    # Не нужно описывать атрибуты: все они унаследованы от BirthdayMixin.
+    pass
+
+
+class BirthdayUpdateView(BirthdayMixin, UpdateView):
+    # И здесь все атрибуты наследуются от BirthdayMixin.
+    pass
+
+class BirthdayDeleteView(DeleteView):
+    model = Birthday
+    success_url = reverse_lazy('birthday:list')
+
+
+
+
+
+
+class Birthd1ayCreateView(CreateView):
     """
     Проверка имён и виджет-календарь настроены в форме BirthdayForm,
      а в форме, созданной классом BirthdayCreateView, их нет.
@@ -110,7 +136,7 @@ class BirthdayCreateView(CreateView):
     success_url = reverse_lazy('birthday:list')
 
 
-class BirthdayUpdateView(UpdateView):
+class Birthda1yUpdateView(UpdateView):
     model = Birthday
     form_class = BirthdayForm
     template_name = 'birthday/birthday.html'
