@@ -36,7 +36,7 @@ def birthday(request, pk=None):
             form.cleaned_data['birthday']
         )
         context.update({'birthday_countdown': birthday_countdown})
-    return render(request, 'birthday/birthday.html', context)
+    return render(request, 'birthday/birthday_form.html', context)
 
 
 def birthday_list(request):
@@ -71,7 +71,7 @@ def delete_birthday(request, pk):
         # ...и переадресовываем пользователя на страницу со списком записей.
         return redirect('birthday:list')
     # Если был получен GET-запрос — отображаем форму.
-    return render(request, 'birthday/birthday.html', context)
+    return render(request, 'birthday/birthday_form.html', context)
 
 
 class BirthdayListView(ListView):
@@ -90,17 +90,15 @@ class BirthdayMixin:
     success_url = reverse_lazy('birthday:list')
 
 
-class BirthdayFormMixin:
+
+
+
+class BirthdayCreateView(BirthdayMixin,  CreateView):
     form_class = BirthdayForm
-    template_name = 'birthday/birthday.html'
 
 
-class BirthdayCreateView(BirthdayMixin, BirthdayFormMixin, CreateView):
-    pass
-
-
-class BirthdayUpdateView(BirthdayMixin, BirthdayFormMixin, UpdateView):
-    pass
+class BirthdayUpdateView(BirthdayMixin,  UpdateView):
+    form_class = BirthdayForm
 
 
 class BirthdayDeleteView(BirthdayMixin, DeleteView):
