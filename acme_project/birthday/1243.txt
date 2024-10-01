@@ -1,71 +1,50 @@
-    title = forms.CharField(label='Название', max_length=20)
-    description = forms.CharField(
-        label='Описание',
-        widget=forms.Textarea({'cols': '22', 'rows': '5'}),
-    )
-    price = forms.IntegerField(
-        label='Цена',
-        min_value=10, max_value=100,
-        help_text='Рекомендованная розничная цена',
-    )
-    comment = forms.CharField(
-        label='Комментарий',
-        required=False,
-        widget=forms.Textarea({'cols': '22', 'rows': '5'}),
-    )
+{% extends "base.html" %}
+
+{% block title %}
+  Список заявок
+{% endblock %}
+
+{% block content %}
+  {% for proposal in contest_proposals %}
+    <div>
+      {{ proposal.id }}, {{ proposal.title }}, {{ proposal.price }},
+      {{ proposal.description }}{% if proposal.comment %}, {{ proposal.comment }}
+    {% if not forloop.last %}
+        <hr>
+    {% endif %}
+     <div>
+        <a href="{% url 'contest:edit' proposal.id %}">Изменить запись</a>
+        <a href="{% url 'contest:delete' proposal.id %}">Удалить запись</a>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}
 
 
 
+urlpatterns = [
+    path('', views.proposal, name='create'),
+    path('list/', views.proposal_list, name='list'),
+    path('<int:pk>/edit/', views.proposal, name='edit'),
+    path('<int:pk>/delete/', views.delete_contest, name='delete'),
 
-            widgets= {
-            'Contest',forms.Textarea({'cols': '22', 'rows': '5'})}
+    # Добавьте сюда новые маршруты для редактирования и удаления заявок.
+]
 
-
-
-                    default=10,
-        validators=[MinValueValidator(10), MaxValueValidator(100)],
-
-
-
-        from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
-# Опишите модель Contest здесь!
-
-
-class Contest(models.Model):
-    title = models.CharField('Название', max_length=20)
-    description = models.TextField('Описание')
-    price = models.IntegerField('Цена',
-        help_text='Рекомендованная розничная цена',
-    )
-    comment = models.TextField(
-        'Комментарий',
-        blank=True,
-    )
+          {% csrf_token %}
+          <!-- В зависимости от выполняемого действия здесь должна
+            отображаться либо форма, либо данные из заявки в тегах p -->
+          {% bootstrap_form form %}
+          {% bootstrap_button button_type="submit" content="Отправить" %}
 
 
-    from django import forms
-from .models import Contest
-
-class ContestForm(forms.Modelform):
-    class Meta:
-        model = Contest
-        fields = '__all__'
-
-
-
-    title = forms.CharField(label='Название', max_length=20)
-    description = forms.CharField(
-        label='Описание',
-        widget=forms.Textarea({'cols': '5', 'rows': '5'}),
-    )
-    price = forms.IntegerField(
-        label='Цена',
-        min_value=10, max_value=100,
-        help_text='Рекомендованная розничная цена',
-    )
-    comment = forms.CharField(
-        label='Комментарий',
-        required=False,
-        widget=forms.Textarea({'cols': '5', 'rows': '5'}),
-    )
+          {% csrf_token %}
+          <!-- В зависимости от выполняемого действия здесь должна
+            отображаться либо форма, либо данные из заявки в тегах p -->
+         {% if not "/delete/" in request.path %}
+          {% bootstrap_form form %}
+        {% else %}
+          <p>{{ data.title }} {{ data.description }}</p>
+          <p>{{ data.price }}</p>
+        {% endif %}
+          {% bootstrap_button button_type="submit" content="Отправить" %}
