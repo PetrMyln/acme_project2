@@ -1,22 +1,14 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
 
 from .models import CustomUser
 
-
-# Define an inline admin descriptor for Employee model
-# which acts a bit like a singleton
-class CustomUserInline(admin.StackedInline):
-    model = CustomUser
-    can_delete = False
-
-
-# Define a new User admin
-class UserAdmin(BaseUserAdmin):
-    inlines = [CustomUserInline]
-
-
-# Re-register UserAdmin
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+# Добавляем поле с днем рождения
+# к стандартному набору полей (fieldsets) пользователя в админке.
+UserAdmin.fieldsets += (
+    # Добавляем кортеж, где первый элемент — это название раздела в админке,
+    # а второй элемент — словарь, где под ключом fields можно указать нужные поля.
+    ('Extra Fields', {'fields': ('birthday', 'bio')}),
+)
+# Регистрируем модель в админке:
+admin.site.register(CustomUser, UserAdmin)
