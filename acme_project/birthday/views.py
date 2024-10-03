@@ -82,7 +82,7 @@ class BirthdayListView(ListView):
     # ...и даже настройки пагинации:
     paginate_by = 10
 
-    # template_name='suka'
+    # template_name='sюka'
 
 
 class BirthdayMixin:
