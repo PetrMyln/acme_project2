@@ -15,7 +15,7 @@ class BirthdayForm(forms.ModelForm):
         fields = ('first_name', 'birthday') — вформе будут показаны толькоперечисленные полямодели;
         exclude = ('last_name',) — вформебудут показаны все полямодели, за исключением перечисленных;
         """
-        fields = '__all__'
+        exclude = ('author',)
         widgets = {
             'birthday': forms.DateInput(attrs={'type': 'date'})
         }
