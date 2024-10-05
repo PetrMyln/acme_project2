@@ -13,6 +13,7 @@ urlpatterns = [
     # path('<int:pk>/delete/', views.delete_birthday, name='delete'),
     # Декорируем вызов метода as_view(), без синтаксического сахара:
     #path('create/', login_required(views.BirthdayCreateView.as_view()), name='create'),
+    path('<int:pk>/comment/', views.add_comment, name='add_comment'),
     path('create/', views.BirthdayCreateView.as_view(), name='create'),
     path('list/', views.BirthdayListView.as_view(), name='list'),
     path('<int:pk>/', views.BirthdayDetailView.as_view(), name='detail'),
